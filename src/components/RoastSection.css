@@ -1,0 +1,70 @@
+.roast {
+  background: radial-gradient(ellipse at 30% 50%, rgba(217, 102, 58, 0.08), transparent 60%),
+    var(--bg-2);
+  border-top: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.roast-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 56px;
+  align-items: center;
+}
+
+.roast-visual {
+  display: grid;
+  place-items: center;
+}
+
+.firebean {
+  position: relative;
+  width: min(320px, 70vw);
+}
+
+.firebean-svg {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: auto;
+}
+
+.firebean-glow {
+  position: absolute;
+  inset: -20%;
+  border-radius: 50%;
+  filter: blur(60px);
+  transition: background 0.8s ease;
+  pointer-events: none;
+}
+
+.firebean-glow[data-phase='fire'] {
+  background: radial-gradient(circle, rgba(242, 145, 61, 0.3), transparent 65%);
+}
+
+.firebean-glow[data-phase='bean'] {
+  background: radial-gradient(circle, rgba(217, 153, 91, 0.2), transparent 65%);
+}
+
+.roast-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.roast-chip {
+  border: 1px solid rgba(242, 145, 61, 0.4);
+  color: var(--caramel-2);
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+@media (max-width: 860px) {
+  .roast-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}

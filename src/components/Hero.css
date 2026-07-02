@@ -118,10 +118,10 @@
   pointer-events: none;
 }
 
-.hero-cup-svg {
+.pour-scene {
   width: 100%;
   height: auto;
-  color: var(--cream-dim);
+  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.4));
 }
 
 .hero-scroll {

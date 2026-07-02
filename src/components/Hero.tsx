@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import { PourScene } from './PourScene'
 import './Hero.css'
 
 const title = ['Свежая', 'выпечка', 'и кофе', 'с характером']
@@ -11,21 +12,6 @@ const beans = [
   { left: '90%', top: '58%', size: 16, delay: 1.8 },
   { left: '70%', top: '80%', size: 20, delay: 0.3 },
 ]
-
-function Steam({ delay, x }: { delay: number; x: number }) {
-  return (
-    <motion.path
-      d={`M ${x} 96 C ${x - 10} 72, ${x + 10} 56, ${x} 34 C ${x - 8} 20, ${x + 6} 10, ${x} 0`}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="5"
-      strokeLinecap="round"
-      initial={{ pathLength: 0, opacity: 0 }}
-      animate={{ pathLength: [0, 1, 1], opacity: [0, 0.7, 0], y: [-2, -14] }}
-      transition={{ duration: 3.2, delay, repeat: Infinity, ease: 'easeInOut' }}
-    />
-  )
-}
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null)
@@ -107,29 +93,7 @@ export function Hero() {
       </motion.div>
 
       <motion.div className="hero-cup" style={{ y: yCup }} aria-hidden="true">
-        <svg viewBox="0 0 200 200" className="hero-cup-svg">
-          <g className="hero-steam">
-            <Steam x={80} delay={0} />
-            <Steam x={104} delay={1.1} />
-            <Steam x={126} delay={2.2} />
-          </g>
-          <ellipse cx="100" cy="182" rx="64" ry="9" fill="rgba(0,0,0,0.35)" />
-          <path
-            d="M 46 108 L 56 176 Q 58 184 68 184 L 132 184 Q 142 184 144 176 L 154 108 Z"
-            fill="#f5ead9"
-          />
-          <path d="M 46 108 L 154 108 L 151 126 L 49 126 Z" fill="#d9995b" />
-          <path
-            d="M 154 116 Q 182 118 178 140 Q 174 160 148 156"
-            fill="none"
-            stroke="#f5ead9"
-            strokeWidth="9"
-            strokeLinecap="round"
-          />
-          <text x="100" y="160" textAnchor="middle" fontSize="26" fontFamily="Georgia, serif" fill="#14100d" fontWeight="700">
-            М
-          </text>
-        </svg>
+        <PourScene />
       </motion.div>
 
       <motion.a

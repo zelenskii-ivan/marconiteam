@@ -3,14 +3,31 @@
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   background: var(--bg-2);
-  padding: 18px 0;
+  padding: 14px 0;
   transform: rotate(-1.2deg) scale(1.02);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .marquee-track {
   display: flex;
   width: max-content;
-  animation: marquee-scroll 24s linear infinite;
+  animation: marquee-scroll 18s linear infinite;
+}
+
+.marquee-track--reverse {
+  animation: marquee-scroll 26s linear infinite reverse;
+  opacity: 0.55;
+}
+
+.marquee-track--reverse .marquee-item {
+  font-size: clamp(14px, 2vw, 19px);
+  font-style: normal;
+  font-family: var(--font-body);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
 }
 
 .marquee:hover .marquee-track {

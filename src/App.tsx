@@ -7,6 +7,7 @@ import { Loader } from './components/Loader'
 import { Header } from './components/Header'
 import { Hero } from './components/Hero'
 import { Marquee } from './components/Marquee'
+import { RoastSection } from './components/RoastSection'
 import { MenuSection } from './components/MenuSection'
 import { ItemModal } from './components/ItemModal'
 import { About } from './components/About'
@@ -18,7 +19,7 @@ export default function App() {
   const [selected, setSelected] = useState<MenuItem | null>(null)
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 1500)
+    const t = setTimeout(() => setLoading(false), 1900)
     return () => clearTimeout(t)
   }, [])
 
@@ -32,6 +33,7 @@ export default function App() {
         <LayoutGroup>
           <Hero />
           <Marquee />
+          <RoastSection />
           <MenuSection
             id="drinks"
             label="Напитки"

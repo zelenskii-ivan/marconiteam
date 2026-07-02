@@ -60,8 +60,8 @@ export function MenuCard({ item, onSelect }: Props) {
       >
         <motion.span
           className="menu-card-emoji"
-          whileHover={reduced ? undefined : { scale: 1.15, rotate: -8 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 14 }}
+          whileHover={reduced ? undefined : { scale: 1.2, rotate: [0, -12, 10, -5, 0], y: [0, -10, 0] }}
+          transition={{ duration: 0.55, ease: 'easeInOut' }}
         >
           {item.emoji}
         </motion.span>

@@ -11,9 +11,10 @@
   text-align: center;
 }
 
-.loader-cup {
-  font-size: 44px;
-  margin-bottom: 12px;
+.loader-cupsvg {
+  width: 76px;
+  height: auto;
+  margin: 0 auto 10px;
 }
 
 .loader-word {
