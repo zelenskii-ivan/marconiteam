@@ -1,5 +1,6 @@
 import Fastify from 'fastify'
 import type { FastifyReply, FastifyRequest } from 'fastify'
+import process from 'node:process'
 import cookie from '@fastify/cookie'
 import cors from '@fastify/cors'
 import helmet from '@fastify/helmet'
@@ -13,6 +14,8 @@ const app = Fastify({
   logger: true,
   trustProxy: true,
 })
+
+const startedAt = Date.now()
 
 const authStartSchema = z.object({
   channel: z.enum(['sms']),
@@ -149,7 +152,21 @@ async function registerApp() {
     }
   })
 
-  app.get('/api/health', async () => ({ ok: true }))
+  app.get('/api/health', async () => ({
+    ok: true,
+    uptimeSec: Math.round((Date.now() - startedAt) / 1000),
+    timestamp: new Date().toISOString(),
+  }))
+
+  app.get('/api/ready', async (request, reply) => {
+    try {
+      await pool.query('select 1')
+      return reply.send({ ok: true, db: 'up' })
+    } catch (error) {
+      request.log.error(error, 'Database readiness check failed')
+      return reply.code(503).send({ ok: false, db: 'down' })
+    }
+  })
 
   app.post('/api/auth/start', async (request, reply) => {
     const parsed = authStartSchema.parse(request.body)
@@ -732,6 +749,27 @@ const start = async () => {
     port: config.PORT,
   })
 }
+
+const shutdown = async (signal: string) => {
+  app.log.info({ signal }, 'Shutting down gracefully')
+
+  try {
+    await app.close()
+    await pool.end()
+    process.exit(0)
+  } catch (error) {
+    app.log.error(error, 'Graceful shutdown failed')
+    process.exit(1)
+  }
+}
+
+process.on('SIGINT', () => {
+  void shutdown('SIGINT')
+})
+
+process.on('SIGTERM', () => {
+  void shutdown('SIGTERM')
+})
 
 start().catch((error) => {
   app.log.error(error)

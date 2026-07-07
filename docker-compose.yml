@@ -7,6 +7,12 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-marconi_dev_password}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-marconi} -d ${POSTGRES_DB:-marconi}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     restart: unless-stopped
 
   api:
@@ -23,10 +29,18 @@ services:
       COOKIE_NAME: marconi_session
       PERSONAL_DATA_CONSENT_VERSION: ${PERSONAL_DATA_CONSENT_VERSION:-2026-07-07}
       MARKETING_CONSENT_VERSION: ${MARKETING_CONSENT_VERSION:-2026-07-07}
+      PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-privacy@marconi.local}
       SMS_PROVIDER: ${SMS_PROVIDER:-log}
       EXPOSE_DEBUG_OTP: ${EXPOSE_DEBUG_OTP:-false}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/ready').then((res) => { if (!res.ok) process.exit(1) }).catch(() => process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
     restart: unless-stopped
 
   web:
@@ -38,7 +52,14 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      - api
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/ > /dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     restart: unless-stopped
 
 volumes:

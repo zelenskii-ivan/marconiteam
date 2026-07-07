@@ -40,6 +40,8 @@ npm run preview               # локальный просмотр dist/
 ```bash
 # Локальная проверка
 ./scripts/deploy-local.sh     # http://localhost:8080
+./scripts/smoke-check.sh      # smoke-check основных экранов и API
+./scripts/backup-db.sh        # резервная копия PostgreSQL
 
 # На сервере (Timeweb, REG.RU, Yandex Cloud)
 docker compose build
@@ -72,6 +74,13 @@ docker compose up -d
 | `PRIVACY_CONTACT_EMAIL` | Email для privacy-обращений и статусов по ПДн |
 | `SMS_PROVIDER` | Провайдер OTP, сейчас `log` для dev/stage |
 | `EXPOSE_DEBUG_OTP` | Показывать OTP в dev-ответе API |
+
+## Эксплуатация
+
+- `GET /api/health` — liveness-check API
+- `GET /api/ready` — readiness-check API с проверкой базы
+- `npm run smoke` — быстрый smoke-check сайта, кабинета и API
+- `./scripts/backup-db.sh` — ручной backup PostgreSQL в `backups/`
 
 ## Личный кабинет
 
