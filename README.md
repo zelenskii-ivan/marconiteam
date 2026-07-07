@@ -44,6 +44,8 @@ npm run preview               # локальный просмотр dist/
 ./scripts/backup-db.sh        # резервная копия PostgreSQL
 
 # На сервере (Timeweb, REG.RU, Yandex Cloud)
+cp .env.production.example .env
+./scripts/release-check.sh .env
 docker compose build
 docker compose up -d
 ```
@@ -80,7 +82,11 @@ docker compose up -d
 - `GET /api/health` — liveness-check API
 - `GET /api/ready` — readiness-check API с проверкой базы
 - `npm run smoke` — быстрый smoke-check сайта, кабинета и API
+- `npm run release:check` — проверка production `.env` и сборок перед релизом
 - `./scripts/backup-db.sh` — ручной backup PostgreSQL в `backups/`
+- `./scripts/restore-db.sh backups/file.sql.gz` — восстановление PostgreSQL из backup
+
+Подробный порядок выкладки: [docs/deployment-runbook.md](/Users/ivanzelenskiy/Projects/marconi-bakery/docs/deployment-runbook.md)
 
 ## Личный кабинет
 

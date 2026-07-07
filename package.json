@@ -11,6 +11,7 @@
     "build:api": "tsc -p tsconfig.api.json",
     "start:api": "node dist-api/server.js",
     "migrate:api": "tsx api/src/migrate.ts",
+    "release:check": "bash scripts/release-check.sh",
     "smoke": "bash scripts/smoke-check.sh",
     "lint": "oxlint",
     "preview": "vite preview",
