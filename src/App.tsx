@@ -11,9 +11,13 @@ import { BottomBar } from './components/BottomBar'
 import { Metrika } from './components/Metrika'
 import { initScrollGoal } from './utils/analytics'
 import { AccountPage } from './account/AccountPage'
+import { LegalPage } from './legal/LegalPage'
 
 export default function App() {
   const isAccountPage = window.location.pathname.startsWith('/account')
+  const legalSlug = window.location.pathname.startsWith('/legal/')
+    ? window.location.pathname.replace('/legal/', '')
+    : null
 
   useEffect(() => initScrollGoal(), [])
 
@@ -74,6 +78,15 @@ export default function App() {
       <div className="page-shell">
         <Metrika />
         <AccountPage />
+      </div>
+    )
+  }
+
+  if (legalSlug) {
+    return (
+      <div className="page-shell">
+        <Metrika />
+        <LegalPage slug={legalSlug} />
       </div>
     )
   }

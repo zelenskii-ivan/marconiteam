@@ -16,6 +16,7 @@ Mobile-first, PWA, готов к деплою в Docker.
 cd /Users/ivanzelenskiy/Projects/marconi-bakery
 npm install
 cp .env.example .env          # задайте VITE_SITE_URL и VITE_YM_COUNTER_ID
+docker compose up -d db       # поднимает локальный PostgreSQL для кабинета
 npm run dev:api               # API: http://localhost:3000
 npm run dev                   # фронтенд: http://localhost:5173
 ```
@@ -65,6 +66,7 @@ docker compose up -d
 | `POSTGRES_DB` | Имя базы PostgreSQL для личного кабинета |
 | `POSTGRES_USER` | Пользователь PostgreSQL |
 | `POSTGRES_PASSWORD` | Пароль PostgreSQL |
+| `DATABASE_URL` | Строка подключения API к PostgreSQL |
 | `PERSONAL_DATA_CONSENT_VERSION` | Версия согласия на обработку ПДн |
 | `MARKETING_CONSENT_VERSION` | Версия маркетингового согласия |
 | `SMS_PROVIDER` | Провайдер OTP, сейчас `log` для dev/stage |

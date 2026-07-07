@@ -1,0 +1,119 @@
+.legal-shell {
+  position: relative;
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(245, 239, 230, 0.96), rgba(240, 233, 223, 0.98)),
+    radial-gradient(circle at top left, rgba(166, 90, 47, 0.12), transparent 28%);
+  overflow: hidden;
+}
+
+.legal-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.legal-glow--top {
+  background: radial-gradient(circle at 12% 12%, rgba(216, 155, 99, 0.18), transparent 22%);
+}
+
+.legal-glow--bottom {
+  background: radial-gradient(circle at 88% 84%, rgba(123, 72, 40, 0.12), transparent 24%);
+}
+
+.legal {
+  position: relative;
+  z-index: 1;
+  padding-block: 40px 88px;
+}
+
+.legal-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.legal-back {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+.legal-hero {
+  max-width: 860px;
+  margin-top: 28px;
+}
+
+.legal-kicker {
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.legal-hero h1 {
+  margin-top: 12px;
+  font-size: clamp(34px, 5vw, 60px);
+  line-height: 1.05;
+}
+
+.legal-hero p {
+  margin-top: 16px;
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+
+.legal-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.legal-meta span {
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(43, 43, 43, 0.08);
+  font-size: 13px;
+}
+
+.legal-sections {
+  display: grid;
+  gap: 18px;
+  margin-top: 34px;
+}
+
+.legal-card {
+  padding: 24px;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(43, 43, 43, 0.08);
+  box-shadow: var(--shadow-card);
+}
+
+.legal-card h2 {
+  font-size: 26px;
+}
+
+.legal-card p {
+  margin-top: 12px;
+  line-height: 1.75;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 767px) {
+  .legal {
+    padding-block: 28px 72px;
+  }
+
+  .legal-card {
+    padding: 20px;
+    border-radius: 22px;
+  }
+
+  .legal-card h2 {
+    font-size: 22px;
+  }
+}
