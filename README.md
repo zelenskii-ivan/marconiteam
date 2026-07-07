@@ -69,6 +69,7 @@ docker compose up -d
 | `DATABASE_URL` | Строка подключения API к PostgreSQL |
 | `PERSONAL_DATA_CONSENT_VERSION` | Версия согласия на обработку ПДн |
 | `MARKETING_CONSENT_VERSION` | Версия маркетингового согласия |
+| `PRIVACY_CONTACT_EMAIL` | Email для privacy-обращений и статусов по ПДн |
 | `SMS_PROVIDER` | Провайдер OTP, сейчас `log` для dev/stage |
 | `EXPOSE_DEBUG_OTP` | Показывать OTP в dev-ответе API |
 
@@ -80,6 +81,7 @@ docker compose up -d
 - `/account` — вход и кабинет клиента
 - `Fastify + PostgreSQL` API под `/api`
 - логирование согласий, экспорт данных и заявка на удаление
+- история privacy-запросов и контакт для обращений по ПДн
 - Docker-схема `web + api + db`
 
 Что нужно перед реальным продакшен-запуском:

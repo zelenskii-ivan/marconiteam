@@ -15,6 +15,7 @@ const envSchema = z.object({
   OTP_RESEND_COOLDOWN_SEC: z.coerce.number().int().positive().default(60),
   PERSONAL_DATA_CONSENT_VERSION: z.string().default('2026-07-07'),
   MARKETING_CONSENT_VERSION: z.string().default('2026-07-07'),
+  PRIVACY_CONTACT_EMAIL: z.string().email().default('privacy@marconi.local'),
   SMS_PROVIDER: z.enum(['log']).default('log'),
   EXPOSE_DEBUG_OTP: z
     .string()
@@ -25,3 +26,7 @@ const envSchema = z.object({
 export const config = envSchema.parse(process.env)
 
 export const isProduction = config.NODE_ENV === 'production'
+
+export const allowedWebOrigins = config.API_CORS_ORIGIN.split(',')
+  .map((value) => value.trim())
+  .filter(Boolean)

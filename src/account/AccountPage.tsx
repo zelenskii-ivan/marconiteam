@@ -52,6 +52,17 @@ interface Consent {
   revokedAt: string | null
 }
 
+interface PrivacyRequest {
+  id: string
+  requestType: string
+  status: string
+  payload: {
+    reason?: string
+  } | null
+  createdAt: string
+  completedAt: string | null
+}
+
 type NoticeTone = 'success' | 'warning'
 
 interface NoticeState {
@@ -109,6 +120,21 @@ function formatOrderStatus(status: string) {
   return status
 }
 
+function formatPrivacyRequestType(type: string) {
+  if (type === 'export') return 'Экспорт данных'
+  if (type === 'delete') return 'Удаление аккаунта'
+  if (type === 'revoke_marketing') return 'Отзыв маркетинга'
+  return type
+}
+
+function formatPrivacyRequestStatus(status: string) {
+  if (status === 'new') return 'Новый'
+  if (status === 'in_progress') return 'В работе'
+  if (status === 'completed') return 'Завершён'
+  if (status === 'rejected') return 'Отклонён'
+  return status
+}
+
 async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(path, {
     credentials: 'include',
@@ -137,9 +163,11 @@ export function AccountPage() {
   const [favorites, setFavorites] = useState<Favorite[]>([])
   const [addresses, setAddresses] = useState<Address[]>([])
   const [consents, setConsents] = useState<Consent[]>([])
+  const [privacyRequests, setPrivacyRequests] = useState<PrivacyRequest[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<NoticeState | null>(null)
+  const [privacyContactEmail, setPrivacyContactEmail] = useState('')
 
   const [phone, setPhone] = useState('')
   const [displayName, setDisplayName] = useState('')
@@ -177,12 +205,13 @@ export function AccountPage() {
   )
 
   const loadDashboard = async () => {
-    const [meData, ordersData, favoritesData, addressesData, consentsData] = await Promise.all([
+    const [meData, ordersData, favoritesData, addressesData, consentsData, privacyRequestsData] = await Promise.all([
       api<MeResponse>('/api/me'),
       api<{ items: Order[] }>('/api/me/orders'),
       api<{ items: Favorite[] }>('/api/me/favorites'),
       api<{ items: Address[] }>('/api/me/addresses'),
       api<{ items: Consent[] }>('/api/me/consents'),
+      api<{ items: PrivacyRequest[]; contactEmail: string }>('/api/me/privacy/requests'),
     ])
 
     setMe(meData)
@@ -190,6 +219,8 @@ export function AccountPage() {
     setFavorites(favoritesData.items)
     setAddresses(addressesData.items)
     setConsents(consentsData.items)
+    setPrivacyRequests(privacyRequestsData.items)
+    setPrivacyContactEmail(privacyRequestsData.contactEmail)
     setProfileName(meData.user.displayName ?? '')
     setProfileEmail(meData.contacts.find((contact) => contact.type === 'email')?.value ?? '')
   }
@@ -438,6 +469,7 @@ export function AccountPage() {
     setFavorites([])
     setAddresses([])
     setConsents([])
+    setPrivacyRequests([])
     setNotice({
       tone: 'success',
       message: 'Вы вышли из личного кабинета.',
@@ -808,9 +840,32 @@ export function AccountPage() {
                   <button className="btn btn--outline" type="button" onClick={requestDeletion}>Запросить удаление</button>
                 </div>
 
+                <div className="account-list">
+                  <p className="account-subhead">История privacy-запросов</p>
+                  {privacyRequests.length === 0 ? (
+                    <p className="account-empty">Вы ещё не создавали запросы на экспорт или удаление данных.</p>
+                  ) : null}
+                  {privacyRequests.map((request) => (
+                    <div key={request.id} className="account-row">
+                      <span>{formatPrivacyRequestType(request.requestType)}</span>
+                      <strong>{formatPrivacyRequestStatus(request.status)}</strong>
+                      <small>
+                        Создан {formatDate(request.createdAt)}
+                        {request.completedAt ? ` · завершён ${formatDate(request.completedAt)}` : ''}
+                        {request.payload?.reason ? ` · ${request.payload.reason}` : ''}
+                      </small>
+                    </div>
+                  ))}
+                </div>
+
                 <p className="account-note">
                   По 152-ФЗ и 38-ФЗ эти действия требуют не только интерфейса, но и внутреннего регламента обработки запросов и остановки рассылок.
                 </p>
+                {privacyContactEmail ? (
+                  <p className="account-note">
+                    Канал для privacy-обращений: <a href={`mailto:${privacyContactEmail}`}>{privacyContactEmail}</a>
+                  </p>
+                ) : null}
               </section>
             </div>
           </div>

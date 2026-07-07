@@ -5,7 +5,7 @@ import cors from '@fastify/cors'
 import helmet from '@fastify/helmet'
 import rateLimit from '@fastify/rate-limit'
 import { z } from 'zod'
-import { config } from './config.js'
+import { allowedWebOrigins, config } from './config.js'
 import { clearSession, getSessionUser, issueSession, normalizePhone } from './auth.js'
 import { generateOtpCode, hashValue, pool, runMigrations } from './db.js'
 
@@ -51,6 +51,8 @@ const requestDeletionSchema = z.object({
   reason: z.string().trim().max(500).optional(),
 })
 
+const mutatingMethods = new Set(['POST', 'PATCH', 'PUT', 'DELETE'])
+
 async function requireUser(request: FastifyRequest, reply: FastifyReply) {
   const user = await getSessionUser(request)
   if (!user) {
@@ -58,7 +60,31 @@ async function requireUser(request: FastifyRequest, reply: FastifyReply) {
     return null
   }
 
+  if (user.status !== 'active') {
+    await clearSession(reply, request.cookies[config.COOKIE_NAME])
+    reply.code(403).send({ error: 'ACCOUNT_BLOCKED' })
+    return null
+  }
+
   return user
+}
+
+function parseOriginHeader(headerValue?: string) {
+  if (!headerValue) return null
+
+  try {
+    return new URL(headerValue).origin
+  } catch {
+    return null
+  }
+}
+
+function getRequestOrigin(request: FastifyRequest) {
+  return parseOriginHeader(request.headers.origin) ?? parseOriginHeader(request.headers.referer)
+}
+
+function isAllowedOrigin(origin: string) {
+  return allowedWebOrigins.includes(origin)
 }
 
 async function audit(params: {
@@ -82,9 +108,24 @@ async function audit(params: {
 }
 
 async function registerApp() {
+  app.setErrorHandler((error, request, reply) => {
+    if (error instanceof z.ZodError) {
+      return reply.code(400).send({
+        error: 'VALIDATION_ERROR',
+        details: error.issues.map((issue) => ({
+          path: issue.path.join('.'),
+          message: issue.message,
+        })),
+      })
+    }
+
+    request.log.error(error)
+    return reply.code(500).send({ error: 'INTERNAL_SERVER_ERROR' })
+  })
+
   await app.register(cookie)
   await app.register(cors, {
-    origin: config.API_CORS_ORIGIN.split(',').map((item) => item.trim()),
+    origin: allowedWebOrigins,
     credentials: true,
   })
   await app.register(helmet, {
@@ -94,6 +135,18 @@ async function registerApp() {
   await app.register(rateLimit, {
     max: 20,
     timeWindow: '1 minute',
+  })
+
+  app.addHook('onRequest', async (request, reply) => {
+    if (!mutatingMethods.has(request.method)) return
+    if (!request.url.startsWith('/api/')) return
+
+    const requestOrigin = getRequestOrigin(request)
+    if (!requestOrigin) return
+
+    if (!isAllowedOrigin(requestOrigin)) {
+      return reply.code(403).send({ error: 'ORIGIN_NOT_ALLOWED' })
+    }
   })
 
   app.get('/api/health', async () => ({ ok: true }))
@@ -127,9 +180,11 @@ async function registerApp() {
 
     const existingUser = await pool.query<{ user_id: string }>(
       `
-        select user_id
-        from user_contacts
-        where contact_type = 'phone' and contact_value = $1
+        select uc.user_id
+        from user_contacts uc
+        join users u on u.id = uc.user_id
+        where uc.contact_type = 'phone'
+          and uc.contact_value = $1
         limit 1
       `,
       [phone],
@@ -241,6 +296,21 @@ async function registerApp() {
           userId,
           parsed.displayName,
         ])
+      }
+
+      const currentUser = await client.query<{ status: string; deleted_at: Date | null }>(
+        `
+          select status, deleted_at
+          from users
+          where id = $1
+          limit 1
+        `,
+        [userId],
+      )
+
+      if (!currentUser.rowCount || currentUser.rows[0].status !== 'active' || currentUser.rows[0].deleted_at) {
+        await client.query('rollback')
+        return reply.code(403).send({ error: 'ACCOUNT_BLOCKED' })
       }
 
       await client.query('update auth_challenges set status = $2, attempts = $3 where id = $1', [
@@ -625,6 +695,31 @@ async function registerApp() {
     )
 
     return reply.send({ ok: true })
+  })
+
+  app.get('/api/me/privacy/requests', async (request, reply) => {
+    const user = await requireUser(request, reply)
+    if (!user) return
+
+    const requests = await pool.query(
+      `
+        select id,
+               request_type as "requestType",
+               status,
+               payload,
+               created_at as "createdAt",
+               completed_at as "completedAt"
+        from privacy_requests
+        where user_id = $1
+        order by created_at desc
+      `,
+      [user.id],
+    )
+
+    return reply.send({
+      items: requests.rows,
+      contactEmail: config.PRIVACY_CONTACT_EMAIL,
+    })
   })
 }
 
