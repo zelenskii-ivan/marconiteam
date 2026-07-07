@@ -2,29 +2,87 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <!-- Защита: строгая Content Security Policy — только собственные ресурсы, никаких внешних скриптов и трекеров -->
+    <!-- CSP: собственные ресурсы + Яндекс Метрика + iframe Яндекс Карт -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' ws: wss:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'"
+      content="default-src 'self'; script-src 'self' https://mc.yandex.ru; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://mc.yandex.ru; font-src 'self'; connect-src 'self' https://mc.yandex.ru ws: wss:; frame-src https://yandex.ru; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'"
     />
-    <meta name="referrer" content="no-referrer" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" href="/fonts/playfair-display-cyrillic-600-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/playfair-display-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="canonical" href="__SITE_URL__/" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
-    <meta name="theme-color" content="#14100d" />
+    <meta name="theme-color" content="#F7F4EF" />
+
+    <title>Кофейня-пекарня «Маркони» — кофе с собой и свежая выпечка на Гидрострое | Краснодар</title>
     <meta
       name="description"
-      content="Кофейня-пекарня «Маркони»: популярные напитки и свежая выпечка — рецепты, состав и пищевая ценность."
+      content="Кофейня-пекарня «Маркони» в Краснодаре на ул. Валерия Гассия (Гидрострой): кофе с собой, свежие круассаны от 115 ₽, пельмени и вареники ручной лепки. Открыто ежедневно до 22:00. Рейтинг 4.8 на Яндекс Картах."
     />
-    <!-- iPhone / iOS PWA -->
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:title" content="Кофейня-пекарня «Маркони» — кофе и выпечка на Гидрострое" />
+    <meta
+      property="og:description"
+      content="Свежая выпечка каждый день, кофе с собой, пельмени и вареники ручной лепки. Краснодар, ул. им. Валерия Гассия, 4/7к1."
+    />
+    <meta property="og:url" content="__SITE_URL__/" />
+    <meta property="og:image" content="__SITE_URL__/images/og.webp" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Schema.org: LocalBusiness для сниппета в поиске (раздел 5 ТЗ) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": ["Bakery", "CafeOrCoffeeShop"],
+      "name": "Кофейня-пекарня «Маркони»",
+      "description": "Кофе с собой, свежая выпечка и продукция ручной лепки в районе Гидростроителей.",
+      "telephone": "+7-989-289-47-77",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "ул. им. Валерия Гассия, 4/7к1, подъезд 2",
+        "addressLocality": "Краснодар",
+        "addressCountry": "RU"
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+        "opens": "08:00",
+        "closes": "22:00"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "bestRating": "5",
+        "ratingCount": "150"
+      },
+      "priceRange": "₽",
+      "servesCuisine": "Выпечка, кофе, домашняя кухня",
+      "currenciesAccepted": "RUB",
+      "paymentAccepted": "Наличные, карта, QR-код",
+      "amenityFeature": [
+        { "@type": "LocationFeatureSpecification", "name": "Доступно для маломобильных гостей", "value": true },
+        { "@type": "LocationFeatureSpecification", "name": "Можно с собаками", "value": true },
+        { "@type": "LocationFeatureSpecification", "name": "Летняя терраса", "value": true }
+      ]
+    }
+    </script>
+
+    <!-- iOS / PWA -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Маркони" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
-    <title>Маркони — кофейня и пекарня</title>
   </head>
   <body>
     <div id="root"></div>

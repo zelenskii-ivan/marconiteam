@@ -4,10 +4,10 @@ import { mkdir } from 'node:fs/promises'
 
 const svg = (pad) => Buffer.from(`
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" fill="#14100d"/>
-  <circle cx="256" cy="256" r="${190 - pad}" fill="#d9995b"/>
+  <rect width="512" height="512" fill="#f7f1e8"/>
+  <circle cx="256" cy="256" r="${190 - pad}" fill="#b85c38"/>
   <text x="256" y="${330 - pad * 0.4}" text-anchor="middle" font-family="Georgia, serif"
-        font-weight="700" font-size="${240 - pad}" fill="#14100d">М</text>
+        font-weight="700" font-size="${240 - pad}" fill="#f7f1e8">М</text>
 </svg>`)
 
 await mkdir('public/icons', { recursive: true })

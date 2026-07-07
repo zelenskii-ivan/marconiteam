@@ -1,117 +1,140 @@
-import { useRef } from 'react'
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
-import { PourScene } from './PourScene'
+import { useEffect, useState } from 'react'
+import { business } from '../data/business'
+import { useOpenStatus } from '../utils/schedule'
+import { trackGoal } from '../utils/analytics'
+import {
+  IconClock,
+  IconDog,
+  IconMouse,
+  IconPastry,
+  IconPhone,
+  IconPin,
+  IconStar,
+  IconTelegram,
+  IconWhatsApp,
+} from './Icons'
 import './Hero.css'
 
-const title = ['Свежая', 'выпечка', 'и кофе', 'с характером']
-
-const beans = [
-  { left: '8%', top: '22%', size: 26, delay: 0 },
-  { left: '16%', top: '68%', size: 18, delay: 1.2 },
-  { left: '82%', top: '18%', size: 22, delay: 0.6 },
-  { left: '90%', top: '58%', size: 16, delay: 1.8 },
-  { left: '70%', top: '80%', size: 20, delay: 0.3 },
-]
-
 export function Hero() {
-  const ref = useRef<HTMLElement>(null)
-  const reduced = useReducedMotion()
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start start', 'end start'],
-  })
-  const yText = useTransform(scrollYProgress, [0, 1], ['0%', reduced ? '0%' : '38%'])
-  const yCup = useTransform(scrollYProgress, [0, 1], ['0%', reduced ? '0%' : '-24%'])
-  const opacity = useTransform(scrollYProgress, [0, 0.75], [1, 0])
+  const status = useOpenStatus()
+  const [scrolled, setScrolled] = useState(false)
+  const quickFacts = ['Завтраки весь день', 'Заказ в 2 тапа']
+  const highlights = [
+    { icon: IconClock, value: business.hoursDisplay.split(' ')[1], label: 'каждый день' },
+    { icon: IconStar, value: `${business.rating}/5`, label: 'по отзывам гостей' },
+    { icon: IconPastry, value: 'Свежая выпечка', label: 'печём несколько раз в день' },
+    { icon: IconDog, value: 'Dog-friendly', label: 'рады гостям с питомцами' },
+  ]
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   return (
-    <section className="hero" id="top" ref={ref}>
-      <div className="hero-glow hero-glow--1" />
-      <div className="hero-glow hero-glow--2" />
+    <section className="hero" id="top">
+      <picture className="hero-photo">
+        <source media="(max-width: 767px)" srcSet="/images/hero-mobile.webp" type="image/webp" />
+        <img
+          src="/images/hero.webp"
+          alt="Кофейня-пекарня «Маркони» — свежая выпечка и кофе на Гидрострое"
+          width={1920}
+          height={1080}
+          fetchPriority="high"
+          decoding="async"
+        />
+      </picture>
 
-      {!reduced &&
-        beans.map((b, i) => (
-          <motion.span
-            key={i}
-            className="hero-bean"
-            style={{ left: b.left, top: b.top, fontSize: b.size }}
-            animate={{ y: [0, -18, 0], rotate: [0, 20, -12, 0] }}
-            transition={{ duration: 7 + i, delay: b.delay, repeat: Infinity, ease: 'easeInOut' }}
-            aria-hidden="true"
+      <div className="hero-content container">
+        <div className="hero-copy" data-reveal="hero">
+          <div className="hero-badges" aria-label="Быстрые преимущества">
+            <p className={`hero-status ${status.isOpen ? 'hero-status--open' : 'hero-status--closed'}`}>
+              <span className="hero-status-dot" aria-hidden="true" />
+              {status.text}
+            </p>
+            {quickFacts.map((fact) => (
+              <p key={fact} className="hero-chip">{fact}</p>
+            ))}
+          </div>
+
+          <h1 className="hero-title">{business.name}</h1>
+          <p className="hero-slogan">Место, где начинается доброе утро</p>
+
+          <p className="hero-sub">
+            Свежий кофе, горячая выпечка, ароматные десерты и уютная атмосфера
+            каждый день на Гидрострое.
+          </p>
+
+          <a
+            className="hero-address"
+            href={business.yandexMapsSearch}
+            target="_blank"
+            rel="noopener"
           >
-            🫘
-          </motion.span>
-        ))}
-
-      <motion.div className="hero-content container" style={{ y: yText, opacity }}>
-        <motion.p
-          className="hero-kicker"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.6, duration: 0.6 }}
-        >
-          Кофейня · Пекарня · с 7:30 ежедневно
-        </motion.p>
-
-        <h1 className="hero-title">
-          {title.map((wordText, i) => (
-            <span className="hero-title-line" key={i}>
-              <motion.span
-                initial={{ y: '110%' }}
-                animate={{ y: '0%' }}
-                transition={{ delay: 1.7 + i * 0.12, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              >
-                {wordText}
-              </motion.span>
+            <IconPin size={18} />
+            <span>
+              {business.city}, {business.address}, {business.addressNote.split(' · ')[0]}
             </span>
-          ))}
-        </h1>
+          </a>
 
-        <motion.p
-          className="hero-sub"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2.3, duration: 0.6 }}
+          <div className="hero-cta">
+            <a
+              className="btn btn--primary"
+              href={business.telegramUrl}
+              target="_blank"
+              rel="noopener"
+              onClick={() => trackGoal('telegram')}
+            >
+              <IconTelegram size={20} />
+              Telegram
+            </a>
+            <a
+              className="btn btn--outline btn--wa"
+              href={business.whatsappUrl}
+              target="_blank"
+              rel="noopener"
+              onClick={() => trackGoal('whatsapp')}
+            >
+              <IconWhatsApp size={20} />
+              WhatsApp
+            </a>
+            <a
+              className="btn btn--outline"
+              href={business.phoneHref}
+              onClick={() => trackGoal('call')}
+            >
+              <IconPhone size={20} />
+              {business.phoneDisplay}
+            </a>
+          </div>
+        </div>
+
+        <aside className="hero-panel" aria-label="Ключевая информация" data-reveal="hero">
+          <p className="hero-panel-kicker">Сегодня в Маркони</p>
+          <ul className="hero-highlights">
+            {highlights.map((item) => (
+              <li key={item.label}>
+                <item.icon size={20} />
+                <strong>{item.value}</strong>
+                <span>{item.label}</span>
+              </li>
+            ))}
+          </ul>
+        </aside>
+
+        <a
+          className={`hero-scroll ${scrolled ? 'hero-scroll--hidden' : ''}`}
+          href="#menu"
+          aria-label="Листайте вниз к меню"
         >
-          Печём круассаны 72 слоя, варим кофе на зерне собственной обжарки
-          и делимся рецептами каждой позиции — вместе с пищевой ценностью.
-        </motion.p>
-
-        <motion.div
-          className="hero-cta"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2.5, duration: 0.6 }}
-        >
-          <motion.a href="#drinks" className="btn btn--primary" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
-            Меню напитков
-          </motion.a>
-          <motion.a href="#pastries" className="btn btn--ghost" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
-            Выпечка
-          </motion.a>
-        </motion.div>
-      </motion.div>
-
-      <motion.div className="hero-cup" style={{ y: yCup }} aria-hidden="true">
-        <PourScene />
-      </motion.div>
-
-      <motion.a
-        href="#drinks"
-        className="hero-scroll"
-        aria-label="Прокрутить к меню"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 3 }}
-      >
-        <motion.span
-          animate={reduced ? undefined : { y: [0, 8, 0] }}
-          transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          ↓
-        </motion.span>
-        листайте
-      </motion.a>
+          <span className="hero-scroll-mouse" aria-hidden="true">
+            <IconMouse size={28} />
+          </span>
+          <span>Листайте вниз</span>
+        </a>
+      </div>
     </section>
   )
 }

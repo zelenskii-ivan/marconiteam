@@ -1,48 +1,81 @@
 .about {
-  background: var(--bg-2);
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(255, 248, 240, 0.8), rgba(255, 248, 240, 0.92));
 }
 
 .about-grid {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: 56px;
-  align-items: center;
+  gap: clamp(28px, 5vw, 64px);
 }
 
-.about-stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
+.about-text {
+  align-self: center;
 }
 
-.about-stat {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 26px 22px;
+.about-text p {
+  margin-top: 16px;
+  max-width: 560px;
+  font-size: clamp(15px, 1.7vw, 18px);
+  color: var(--ink-soft);
 }
 
-.about-stat-value {
-  display: block;
-  font-family: var(--font-display);
-  font-size: clamp(34px, 4vw, 52px);
-  font-weight: 700;
-  color: var(--caramel-2);
-  line-height: 1;
+.about-text p:first-of-type {
+  color: var(--ink);
 }
 
-.about-stat-label {
-  display: block;
-  margin-top: 10px;
+.about-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.about-values li {
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 250, 244, 0.9);
+  border: 1px solid var(--gold-line);
+  box-shadow: var(--shadow-card);
   font-size: 14px;
-  color: var(--cream-dim);
+  font-weight: 600;
 }
 
-@media (max-width: 860px) {
+.about-photos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(10px, 1.6vw, 18px);
+}
+
+.about-photos li:nth-child(2) {
+  transform: translateY(20px);
+}
+
+.about-photo {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 26px;
+  box-shadow: var(--shadow-luxury);
+}
+
+@media (max-width: 767px) {
+  .about-photos {
+    gap: 10px;
+  }
+
+  .about-photos li:nth-child(2) {
+    transform: translateY(0);
+  }
+
+  .about-photo {
+    border-radius: 18px;
+  }
+}
+
+@media (min-width: 900px) {
   .about-grid {
-    grid-template-columns: 1fr;
-    gap: 36px;
+    grid-template-columns: 1fr 1.1fr;
+    align-items: center;
   }
 }

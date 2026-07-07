@@ -1,49 +1,73 @@
-import { motion } from 'framer-motion'
+import { business } from '../data/business'
+import { trackGoal } from '../utils/analytics'
+import { IconPhone, IconTelegram, IconWhatsApp } from './Icons'
 import './Footer.css'
 
 export function Footer() {
   return (
     <footer className="footer">
       <div className="container footer-grid">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
+        <div data-reveal="up">
           <p className="footer-logo">Маркони</p>
           <p className="footer-text">
-            Кофейня-пекарня. Печём и варим для вас каждый день с 7:30 до 21:00.
+            Кофейня-пекарня в районе Гидростроителей. Свежая выпечка, кофе
+            с собой и домашняя продукция ручной лепки.
           </p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
-          <p className="footer-head">Адрес</p>
-          <p className="footer-text">ул. Пекарская, 7</p>
-          <p className="footer-text">ежедневно 7:30–21:00</p>
-        </motion.div>
+        <div data-reveal="up">
+          <p className="footer-head">Контакты</p>
+          <ul className="footer-list">
+            <li>
+              <a href={business.phoneHref} onClick={() => trackGoal('call')}>
+                <IconPhone size={17} />
+                {business.phoneDisplay}
+              </a>
+            </li>
+            <li>
+              <a
+                href={business.telegramUrl}
+                target="_blank"
+                rel="noopener"
+                onClick={() => trackGoal('telegram')}
+              >
+                <IconTelegram size={17} />
+                Telegram
+              </a>
+            </li>
+            <li>
+              <a
+                href={business.whatsappUrl}
+                target="_blank"
+                rel="noopener"
+                onClick={() => trackGoal('whatsapp')}
+              >
+                <IconWhatsApp size={17} />
+                WhatsApp
+              </a>
+            </li>
+          </ul>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <p className="footer-head">Связь</p>
+        <div data-reveal="up">
+          <p className="footer-head">Адрес и режим</p>
           <p className="footer-text">
-            <a href="tel:+70000000000">+7 (000) 000-00-00</a>
+            {business.city}, {business.address}
+            <br />
+            {business.addressNote}
           </p>
-          <p className="footer-text">заказ по телефону или у стойки</p>
-        </motion.div>
+          <p className="footer-text">{business.hoursDisplay}</p>
+        </div>
+
+        <div data-reveal="up">
+          <p className="footer-head">Оплата</p>
+          <p className="footer-text">{business.payment}</p>
+          <p className="footer-text">{business.accessibility}</p>
+        </div>
       </div>
 
       <div className="container footer-bottom">
-        <span>© {new Date().getFullYear()} Маркони</span>
+        <span>© {new Date().getFullYear()} {business.fullName}</span>
         <span>Сайт не собирает персональные данные</span>
       </div>
     </footer>

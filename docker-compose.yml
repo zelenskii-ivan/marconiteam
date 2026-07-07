@@ -1,0 +1,10 @@
+services:
+  web:
+    build:
+      context: .
+      args:
+        VITE_SITE_URL: ${VITE_SITE_URL:-https://marcony-krd.ru}
+        VITE_YM_COUNTER_ID: ${VITE_YM_COUNTER_ID:-}
+    ports:
+      - "8080:80"
+    restart: unless-stopped
