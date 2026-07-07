@@ -9,11 +9,13 @@ const links = [
   { href: '#about', label: 'О нас' },
   { href: '#reviews', label: 'Отзывы' },
   { href: '#contacts', label: 'Контакты' },
+  { href: '/account', label: 'Кабинет' },
 ]
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const isAccountPage = window.location.pathname.startsWith('/account')
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16)
@@ -36,7 +38,11 @@ export function Header() {
           aria-label="Основная навигация"
         >
           {links.map((l) => (
-            <a key={l.href} href={l.href} onClick={() => setOpen(false)}>
+            <a
+              key={l.href}
+              href={l.href.startsWith('#') && isAccountPage ? `/${l.href}` : l.href}
+              onClick={() => setOpen(false)}
+            >
               {l.label}
             </a>
           ))}

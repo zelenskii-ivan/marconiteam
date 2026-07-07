@@ -10,8 +10,11 @@ import { Footer } from './components/Footer'
 import { BottomBar } from './components/BottomBar'
 import { Metrika } from './components/Metrika'
 import { initScrollGoal } from './utils/analytics'
+import { AccountPage } from './account/AccountPage'
 
 export default function App() {
+  const isAccountPage = window.location.pathname.startsWith('/account')
+
   useEffect(() => initScrollGoal(), [])
 
   useEffect(() => {
@@ -65,6 +68,15 @@ export default function App() {
       if (frame) window.cancelAnimationFrame(frame)
     }
   }, [])
+
+  if (isAccountPage) {
+    return (
+      <div className="page-shell">
+        <Metrika />
+        <AccountPage />
+      </div>
+    )
+  }
 
   return (
     <div className="page-shell">

@@ -13,15 +13,20 @@ Mobile-first, PWA, готов к деплою в Docker.
 ## Быстрый старт
 
 ```bash
+cd /Users/ivanzelenskiy/Projects/marconi-bakery
 npm install
 cp .env.example .env          # задайте VITE_SITE_URL и VITE_YM_COUNTER_ID
-npm run dev                   # http://localhost:5173
+npm run dev:api               # API: http://localhost:3000
+npm run dev                   # фронтенд: http://localhost:5173
 ```
+
+`npm run dev` нужно запускать именно из папки проекта. Ошибка `ENOENT ... /Users/ivanzelenskiy/package.json` означает, что команда была выполнена уровнем выше, не в репозитории.
 
 ## Сборка
 
 ```bash
 npm run build                 # dist/ + генерация иконок и WebP
+npm run build:api             # dist-api/
 npm run preview               # локальный просмотр dist/
 ```
 
@@ -56,6 +61,30 @@ docker compose up -d
 |------------|----------|
 | `VITE_SITE_URL` | Публичный URL (`https://marcony-krd.ru`) — canonical, OG, sitemap |
 | `VITE_YM_COUNTER_ID` | Номер счётчика Яндекс Метрики |
+| `VITE_API_PROXY_TARGET` | Локальный адрес API для Vite (`http://localhost:3000`) |
+| `POSTGRES_DB` | Имя базы PostgreSQL для личного кабинета |
+| `POSTGRES_USER` | Пользователь PostgreSQL |
+| `POSTGRES_PASSWORD` | Пароль PostgreSQL |
+| `PERSONAL_DATA_CONSENT_VERSION` | Версия согласия на обработку ПДн |
+| `MARKETING_CONSENT_VERSION` | Версия маркетингового согласия |
+| `SMS_PROVIDER` | Провайдер OTP, сейчас `log` для dev/stage |
+| `EXPOSE_DEBUG_OTP` | Показывать OTP в dev-ответе API |
+
+## Личный кабинет
+
+Собрана production-ready основа личного кабинета с авторизацией по SMS-коду, сессиями в `httpOnly` cookie, адресами, избранным, заказами и privacy-запросами.
+
+Что уже есть:
+- `/account` — вход и кабинет клиента
+- `Fastify + PostgreSQL` API под `/api`
+- логирование согласий, экспорт данных и заявка на удаление
+- Docker-схема `web + api + db`
+
+Что нужно перед реальным продакшен-запуском:
+- подключить настоящий SMS-шлюз вместо `SMS_PROVIDER=log`
+- опубликовать тексты согласий и политики обработки ПДн
+- назначить ответственного за обработку заявок на удаление/экспорт
+- настроить бэкапы PostgreSQL и мониторинг API
 
 ## Редактирование контента
 
